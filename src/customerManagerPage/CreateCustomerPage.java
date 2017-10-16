@@ -5,7 +5,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
-
 import basepage.HomePage;
 
 public class CreateCustomerPage extends HomePage {
@@ -45,7 +44,8 @@ public class CreateCustomerPage extends HomePage {
 	String visibleText = "一般纳税人";
 	String comAddress = "日落大道test0010";
 	String comTel = "13411112222";
-	String CustomerServiceExe = "测试客户专员";	
+	String CustomerServiceExe = "测试客户专员";
+	
 	public void createFirstPage(String customer, String visible, String address, String tel) throws InterruptedException{		 
 		 // 定位到新建客户页
 		 createCustomer();
@@ -175,6 +175,7 @@ public class CreateCustomerPage extends HomePage {
 	public void createSecondPage() throws InterruptedException{
 		getcontactAdd().sendKeys(comAddress);
 		getregisteredCapital().sendKeys(captialNum);
+		
 	    new Select(getmoneyType()).selectByVisibleText(moneyText);
 	    getstr840().click();
 	    getbusinessRegistrationNo().sendKeys(RegistrationNo);
