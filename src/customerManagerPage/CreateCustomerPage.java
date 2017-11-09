@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.Select;
 import basepage.HomePage;
+import action.TAction;
 
 public class CreateCustomerPage extends HomePage {
 
@@ -20,8 +21,7 @@ public class CreateCustomerPage extends HomePage {
 	By companyAdd = By.name("companyAddress");
 	By companyTel = By.name("companyTelephone");
 	By subButton = By.xpath("//button-group[@data='customer']/div/button");
-	
-	
+		
 	public WebElement getCustomerName(){
 		return driver.findElement(customerName);
 	}
@@ -40,15 +40,10 @@ public class CreateCustomerPage extends HomePage {
 	public WebElement getSubButton(){
 		return driver.findElement(subButton);
 	}
-	String customerN = "customer" + System.currentTimeMillis();
-	String visibleText = "一般纳税人";
-	String comAddress = "日落大道test0010";
-	String comTel = "13411112222";
-	String CustomerServiceExe = "测试客户专员";
 	
-	public void createFirstPage(String customer, String visible, String address, String tel) throws InterruptedException{		 
-		 // 定位到新建客户页
-		 createCustomer();
+	public void createFirstPage(String customerEditUrl, String customerN, String visibleText, String comAddress, String comTel) throws InterruptedException{		 
+		 // 打开新建客户页
+		 driver.get(customerEditUrl);
 		 // 新建客户首页信息填写提交
 		 getCustomerName().sendKeys(customerN);
 		 new Select(getTaxType()).selectByVisibleText(visibleText);		 
@@ -57,7 +52,7 @@ public class CreateCustomerPage extends HomePage {
 		 getcompanyTel().sendKeys(comTel);    		 
 		 getSubButton().click();		 		
 	}
-	//第二页
+	//第二页元素
 	By contactAdd = By.name("contactAddress");
 	By registeredCapital = By.name("registeredCapital");
 	By moneyType = By.xpath("//div[9]/div/div/div/div/div/div/div/select");
@@ -164,18 +159,10 @@ public class CreateCustomerPage extends HomePage {
 		return driver.findElement(customerServiceExe);
 	}
 	
-	String captialNum = "1000";
-	String moneyText = "USD";
-	String RegistrationNo = "11011011";
-	String Entity = "test0101";
-	String id = "110203198504034315";
-	String testEmail = "yy@yy.c";
-	String industry = "食品";
-	
-	public void createSecondPage() throws InterruptedException{
+	//第二页信息填写方法
+	public void createSecondPage(String comAddress, String captialNum, String moneyText, String RegistrationNo, String Entity, String id, String comTel, String testEmail, String CustomerServiceExe, String industry, String Tnum, String testword, String Tnum2, String selectStype) throws InterruptedException{
 		getcontactAdd().sendKeys(comAddress);
-		getregisteredCapital().sendKeys(captialNum);
-		
+		getregisteredCapital().sendKeys(captialNum);		
 	    new Select(getmoneyType()).selectByVisibleText(moneyText);
 	    getstr840().click();
 	    getbusinessRegistrationNo().sendKeys(RegistrationNo);
@@ -191,11 +178,12 @@ public class CreateCustomerPage extends HomePage {
 	    getactualController().sendKeys(Entity);
 	    getCustomerServiceExe().sendKeys(CustomerServiceExe);
 	    getbussinessIndustry().sendKeys(industry);
-	    getindustryOperatingPeriod().sendKeys("20");
+	   
+	    getindustryOperatingPeriod().sendKeys(Tnum);
 	    getmainProduct().sendKeys("方便"+industry);
-	    getsourceOfMaterial().sendKeys("测试");
-	    getexpordUsd().sendKeys("100000");
-	    new Select(getpayment()).selectByVisibleText("T/T");
+	    getsourceOfMaterial().sendKeys(testword);
+	    getexpordUsd().sendKeys(Tnum2);
+	    new Select(getpayment()).selectByVisibleText(selectStype);
 	    getstrTT().click(); 
 	    //出口国家新窗口操作 
 	    getcountryNameCN().click();	    
@@ -203,10 +191,9 @@ public class CreateCustomerPage extends HomePage {
 	    Thread.sleep(2000);
 	    action.click(getcountrySelect1()).perform();
 	    action.click(getcountrysubBtn()).perform();	        
-	    getportOfEntry().sendKeys("北京"); 
-	    	    
+	    getportOfEntry().sendKeys("北京"); 	    	    
 	}
-	//合作信息页	
+		
 	By messagelink = By.linkText("合作信息");
 	By ChargingStandard = By.name("agencyFeeChargingStandard");
 		
@@ -216,12 +203,13 @@ public class CreateCustomerPage extends HomePage {
 	public WebElement getChargingStandard(){
 		return driver.findElement(ChargingStandard);
 	}
+	//合作信息页
 	
-	public void Cooperative(){
+	public void Cooperative(String Num){
 		getmessagelink().click();
-		getChargingStandard().sendKeys("1");
+		getChargingStandard().sendKeys(Num);
 	}
-	//联系人信息页
+	
 	By contactInfo = By.linkText("联系人信息");
 	By createContact = By.cssSelector("div.col-sm-12 > div > button.btn.btn-default");
 	By contactName = By.name("name");
@@ -247,18 +235,19 @@ public class CreateCustomerPage extends HomePage {
 	public WebElement getcontactBtn(){
 		return driver.findElement(contactBtn);
 	}
+	//联系人信息页
 	
-	public void contactMessage(){
+	public void contactMessage(String testName, String testMNumber, String testEmail){
 		getcontactInfo().click();
 		getcreateContact().click();
-		getcontactName().sendKeys("testname");
-		getmobileNumber().sendKeys("13422221111");
-		getContactEmail().sendKeys("tt@tt.c");
+		getcontactName().sendKeys(testName);
+		getmobileNumber().sendKeys(testMNumber);
+		getContactEmail().sendKeys(testEmail);
 		getcontactBtn().click();			
 	}
-	//境外贸易商信息页面
+	//境外贸易商元素
 	By overseasInfo = By.xpath("//div[@class='nav-tabs-custom']/ul/li[5]/a");
-	By overseasName = By.xpath("//form/div/form/div/div[1]/div/div/div/div/div/input");
+	By overseasName = By.xpath("//div/div/input[@name='name']");
 	By createOverseasP = By.xpath("//*[@id='foreign-contacts']/div/div/div/div/div[1]/button");
 	By area = By.xpath("//form/div/div[2]/div/div/div/div/div/div/div/select");
 	By areaSelect = By.xpath("//html[@id='ng-app']/body/div[2]/div/div/div[2]/form/div/form/div/div[2]/div/div/div/div/div/div/div/select");
@@ -286,18 +275,19 @@ public class CreateCustomerPage extends HomePage {
 	public WebElement getoverseasBtn(){
 		return driver.findElement(overseasBtn);
 	}
-			
-	public void OverseasContact(){
+	//境外页填写信息		
+	public void OverseasContact(String OSName, String selectArea) throws InterruptedException{
 		getoverseasInfo().click();
 		getcreateOverseasP().click();
-	    getoverseasName().sendKeys("tom");
+		Thread.sleep(1000);
+	    getoverseasName().sendKeys(OSName);
 	    getarea().click();	    
-	    new Select(getareaSelect()).selectByVisibleText("中国香港");
+	    new Select(getareaSelect()).selectByVisibleText(selectArea);
 	    getstr37().click();
 	    getoverseasBtn().click();
 		
 	}
-	//证照信息页	
+	//证照信息页元素	
 	By lincenseInf = By.linkText("证照信息");
 	By uploadfile1 = By.cssSelector("input[type=\"file\"]");
 	By uploadfile2 = By.xpath("(//input[@type='file'])[2]");
@@ -319,14 +309,25 @@ public class CreateCustomerPage extends HomePage {
 	public WebElement getSaveDraft(){
 		return driver.findElement(saveDraft);
 	}
-	
-	public void licenseInfo() throws InterruptedException{
+	//证照信息页
+	String jpgPath1 = "C:\\Users\\Public\\Pictures\\Sample Pictures\\Chrysanthemum.jpg";
+	String jpgPath2 = "C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg";
+	public void licenseInfo(String jpgPath1, String jpgPath2) throws InterruptedException{
 		getlincenseInf().click();
 		//上传图片
-		getuploadfile1().sendKeys("C:\\Users\\Public\\Pictures\\Sample Pictures\\Chrysanthemum.jpg");
-		getuploadfile2().sendKeys("C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips.jpg");
+		getuploadfile1().sendKeys(jpgPath1);
+		getuploadfile2().sendKeys(jpgPath2);
 		Thread.sleep(2000);  
 		getsubmit().click();
+		TAction tAction = new TAction(driver);
+		System.out.println(tAction.closeAlertAndGetItsText());
+		Thread.sleep(1000); 
+		tAction.clickAlertSure();
+	}
+	//获取新客户名称
+	By newCustomerName = By.xpath("//table[@id='simpletable']/tbody/tr[1]/td[2]");
+	public String getNewCustomerName(){
+		return driver.findElement(newCustomerName).getText();
 	}
 		
 }

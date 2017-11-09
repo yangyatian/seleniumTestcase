@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import basepage.HomePage;
 import customerManagerPage.MyCustomerPage;
 
 public class TestMyCustomer{
@@ -42,11 +41,9 @@ public class TestMyCustomer{
 	public void testIdSearch() throws InterruptedException {
 		LoginWzPage loginwz = new LoginWzPage(driver, baseUrl);
 	    loginwz.loginStep(username, password);
-		HomePage homePage = new HomePage(driver, baseUrl);
 		MyCustomerPage myCustomer =new MyCustomerPage(driver, baseUrl);
-		homePage.myCustomerEntry();
+		myCustomer.gotoMyCustomerByUrl();
 		Thread.sleep(2000);
-		myCustomer.getDraft().click();//点击草稿页
 		myCustomer.idSearch(customerID);
 		assertTrue(myCustomer.getIdResult().getText().contains(customerID));
 	}
@@ -55,12 +52,10 @@ public class TestMyCustomer{
 	public void testNameSearch() throws InterruptedException {
 		MyCustomerPage myCustomer =new MyCustomerPage(driver, baseUrl);
 		LoginWzPage loginwz = new LoginWzPage(driver, baseUrl);
-		HomePage homePage = new HomePage(driver, baseUrl);
 		loginwz.loginStep(username, password);
 		Thread.sleep(2000);
-		homePage.myCustomerEntry();
+		myCustomer.gotoMyCustomerByUrl();
 		Thread.sleep(2000);
-		myCustomer.getDraft().click();
 		myCustomer.nameSearch(customerName);
 		assertTrue(myCustomer.getNameResult().getText().contains(customerName));
 	}
@@ -69,46 +64,40 @@ public class TestMyCustomer{
 	public void testDateSearch() throws InterruptedException {
 		MyCustomerPage myCustomer =new MyCustomerPage(driver, baseUrl);
 		LoginWzPage loginwz = new LoginWzPage(driver, baseUrl);
-		HomePage homePage = new HomePage(driver, baseUrl);
-		loginwz.loginStep(username, password);
+		loginwz.loginStep(username, password);//登录
 		Thread.sleep(2000);
-		homePage.myCustomerEntry();
+		myCustomer.gotoMyCustomerByUrl();//转到我的客户页面
 		Thread.sleep(2000);
-		myCustomer.getDraft().click();
-		myCustomer.dateSearch(startDay, endDay);
-		String createDate = myCustomer.getDateResult().getText();
-		String createDt = createDate.substring(0, 10);
-		createDt = createDt.replace("-", "");
+		myCustomer.dateSearch(startDay, endDay);//输入起始时间搜索
+		String createDt = myCustomer.fristCreateDate();//获取首行结果创建时间
 		String startTime = startDay.replace("-", "");
 		String endTime = endDay.replace("-", "");
+		//断言搜索结果创建时间是否在搜索时间区间内
 		assertTrue(Long.valueOf(startTime) <= Long.valueOf(createDt) && Long.valueOf(createDt) <= Long.valueOf(endTime));
 	}
+		
 	@Test
 	//通过服务专员搜索
 	public void testAgentSearch() throws InterruptedException {
 		MyCustomerPage myCustomer =new MyCustomerPage(driver, baseUrl);
 		LoginWzPage loginwz = new LoginWzPage(driver, baseUrl);
-		HomePage homePage = new HomePage(driver, baseUrl);
 		loginwz.loginStep(username, password);
 		Thread.sleep(2000);
-		homePage.myCustomerEntry();
+		myCustomer.gotoMyCustomerByUrl();
 		Thread.sleep(2000);
-		myCustomer.getDraft().click();
 		myCustomer.agentSearch(agent);
-		assertTrue(myCustomer.getCustomerServiceResult().getText().equals(agent));
-		
+		assertTrue(myCustomer.getCustomerServiceResult().getText().equals(agent));		
 	}
+	
 	@Test
 	//通过纳税类型搜索
 	public void testTaxTypeSearch() throws InterruptedException {
 		MyCustomerPage myCustomer =new MyCustomerPage(driver, baseUrl);
 		LoginWzPage loginwz = new LoginWzPage(driver, baseUrl);
-		HomePage homePage = new HomePage(driver, baseUrl);
 		loginwz.loginStep(username, password);
 		Thread.sleep(2000);
-		homePage.myCustomerEntry();
+		myCustomer.gotoMyCustomerByUrl();
 		Thread.sleep(2000);
-		myCustomer.getDraft().click();
 		myCustomer.TaxTypeSearch(visibleText);
 		assertTrue(myCustomer.getCompanyTypeResult().getText().contains(visibleText));
 	}
@@ -116,15 +105,13 @@ public class TestMyCustomer{
 	@Test
 	//待审核页通过用户id搜索
 	public void test2IdSearch() throws InterruptedException {
-		MyCustomerPage myCustomer =new MyCustomerPage(driver, baseUrl);
+		MyCustomerPage myCustomer = new MyCustomerPage(driver, baseUrl);
 		LoginWzPage loginwz = new LoginWzPage(driver, baseUrl);
-		HomePage homePage = new HomePage(driver, baseUrl);
 		loginwz.loginStep(username, password);
 		Thread.sleep(2000);
-		homePage.myCustomerEntry();
-		Thread.sleep(2000);
-		myCustomer.getPending().click();
-		myCustomer.idSearch(customerID);
+		myCustomer.gotoMyCustomerByUrl();
+		Thread.sleep(2000);		
+		myCustomer.idSearch2(customerID);
 		assertTrue(myCustomer.getIdResult().getText().contains(customerID));
 	}
 

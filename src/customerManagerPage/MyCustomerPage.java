@@ -4,7 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
-
+import action.TAction;
 import basepage.HomePage;
 
 public class MyCustomerPage extends HomePage{
@@ -90,49 +90,69 @@ public class MyCustomerPage extends HomePage{
 		return driver.findElement(customerServiceResult);
 	}
 	
+	//返回首个搜索结果中的创建日期10位数字
+	public String fristCreateDate(){
+		String createDate = getDateResult().getText();
+		String createDt = createDate.substring(0, 10);
+		createDt = createDt.replace("-", "");
+		return createDt;
+	}
+	
 	String customerID ="100";
 	String customerName="customer";
 	String agent = "客户专员";
 	String visibleText = "一般纳税人";
 	String startDay = "2017-01-01";
 	String endDay = "2017-10-01";
+	String myCustomerUrl = "http://192.168.101.192:81/wz/customer/list";
 	
-	
-	public void idSearch(String customerID) throws InterruptedException{
+	public void gotoMyCustomerByUrl(){
+		TAction taction = new TAction(driver);
+		taction.goTo(myCustomerUrl);
+	}
+	//待审核页搜索id
+	public void idSearch2(String customerID) throws InterruptedException{
+		getPending().click();
+		getCustomerIdInput().sendKeys(customerID);
+		Thread.sleep(2000);
+		getSearchButton().click();
+	}
 		
+	//草稿页
+	public void idSearch(String customerID) throws InterruptedException{
+		getDraft().click();//点击草稿页
 		getCustomerIdInput().sendKeys(customerID);
 		Thread.sleep(2000);
 		getSearchButton().click();
 	}
 	public void nameSearch(String customerName) throws InterruptedException{
-	
+		getDraft().click();
 		getCustomerNameInput().sendKeys(customerName);
 		Thread.sleep(2000);
 		getSearchButton().click();
 	}
 	public void agentSearch(String agent) throws InterruptedException{
-	
+		getDraft().click();
 		getServiceAgent().sendKeys(agent);
 		Thread.sleep(2000);
 		getSearchButton().click();
 	}
 		
 	public void TaxTypeSearch(String visibleText) throws InterruptedException{		
-		
+		getDraft().click();
 		new Select(getTaxType()).selectByVisibleText(visibleText);
 		Thread.sleep(2000);
 		getSearchButton().click();
 	}
 	public void dateSearch(String startDay, String endDay) throws InterruptedException{
 
-		
+		getDraft().click();
 		getdate().click();
 		getStartDayinput().clear();
 		getStartDayinput().sendKeys(startDay);
 		getEndDayinput().clear();
 		getEndDayinput().sendKeys(endDay);
 		getDateSubmit().click();
-
 		Thread.sleep(2000);
 		getSearchButton().click();
 	}

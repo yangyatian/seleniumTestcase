@@ -6,6 +6,7 @@ import action.TAction;
 import basepage.HomePage;
 
 public class ProductMngPage extends HomePage {
+	String productEditUrl = "http://192.168.101.192:81/wz/product/edit";
 
 	public ProductMngPage(WebDriver driver, String url) {
 		super(driver, url);
@@ -16,8 +17,9 @@ public class ProductMngPage extends HomePage {
 		// 登录		
 		this.loginStep(username, password);
 		// 点击准入->产品管理->新增产品
-		this.createProductEntry();
 		TAction tAction = new TAction(driver);
+		tAction.goTo(productEditUrl);
+		tAction.sleep(2000);
 		// 新增产品页面点击客户
 		tAction.findElementClick("name", "customerName");
 		// 通过id搜索并选择已审核的客户

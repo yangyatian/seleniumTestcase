@@ -2,13 +2,11 @@ package testWzlogin;
 
 import static org.junit.Assert.*;
 import loginWz.LoginWzPage;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-
 import action.TAction;
 
 public class testWZlogin{
@@ -32,7 +30,7 @@ public class testWZlogin{
 		System.out.println("Test start");
 		
 	}
-
+	//管理员正常登录
 	@Test
 	public void testlogin() throws InterruptedException {	
 		LoginWzPage loginwz = new LoginWzPage(driver, url);
@@ -43,7 +41,7 @@ public class testWZlogin{
 		assertTrue(loginwz.getNameText().getText().contains(loginNameText));
 		
 	}
-	
+	//用户名密码错误登录
 	@Test
 	public void testloginError() throws InterruptedException {
 		LoginWzPage loginwz = new LoginWzPage(driver, url);
@@ -53,8 +51,7 @@ public class testWZlogin{
 		for(String[] item: dataUp){
 			String rusername = item[0];
 			String rpassword = item[1];
-			loginwz.loginStep(rusername, rpassword);
-			
+			loginwz.loginStep(rusername, rpassword);		
 		}		
 	}
 	

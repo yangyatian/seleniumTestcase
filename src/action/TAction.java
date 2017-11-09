@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -30,10 +29,11 @@ public class TAction {
 	private boolean flag = true;
 	private String value = "";
 	private boolean acceptNextAlert = true;
-	
+
 	public TAction(WebDriver driver) {
 		this.driver = driver;
 	}
+
 	public TAction(WebDriver driver, String url) {
 		this.driver = driver;
 		this.driver.get(url);
@@ -42,11 +42,6 @@ public class TAction {
 	// 浏览器URL导航
 	public void goTo(String url) {
 		this.driver.get(url);
-	}
-
-	// 浏览器退出
-	public void quit() {
-		this.driver.quit();
 	}
 
 	// 浏览器前进
@@ -69,13 +64,49 @@ public class TAction {
 		this.driver.manage().window().maximize();
 	}
 
-	// js弹框确认
+	// 浏览器退出
+	public void quit() {
+		this.driver.quit();
+	}
+
+	// 滚动页面到指定位置（参数：left，right，middle；top，buttom，middle）
+	public void scroll(String x, String y) {
+		if (x.equals("left")) {
+			x = "0";
+		} else if (x.equals("right")) {
+			x = "document.body.scrollWidth";
+		} else if (x.equals("middle")) {
+			x = "document.body.scrollWidth/2";
+		}
+		if (y.equals("top")) {
+			y = "0";
+		} else if (y.equals("buttom")) {
+			y = "document.body.scrollHeight";
+		} else if (y.equals("middle")) {
+			y = "document.body.scrollHeight/2";
+		}
+		this.exeScript(String.format("scroll(%s,%s);", x, y));
+	}
+
+	public void exeScript(String parameter) {
+		JavascriptExecutor js = getJSE();
+		js.executeScript(parameter);
+	}
+
+	private JavascriptExecutor getJSE() {
+		if (this.jse == null) {
+			this.jse = (JavascriptExecutor) this.driver;
+		}
+		return jse;
+	}
+
+	// JS弹框点击确认
 	public void clickAlertSure() {
 		Alert alert = this.driver.switchTo().alert();
 		alert.accept();
 	}
 
-	// js弹框取消
+	// JS弹框点击取消
 	public void clickAlertDismiss() {
 		Alert alert = this.driver.switchTo().alert();
 		alert.dismiss();
@@ -87,7 +118,7 @@ public class TAction {
 		return alert.getText();
 	}
 
-	// 操作alert并获取内容
+	// 操作Alert并获取内容
 	public String closeAlertAndGetItsText() {
 		try {
 			Alert alert = driver.switchTo().alert();
@@ -122,7 +153,7 @@ public class TAction {
 		return newCookies;
 	}
 
-	// 截取屏幕
+	// 截屏
 	public void getScreen(String filepath) {
 		WebDriver augmentedDriver = new Augmenter().augment(this.driver);
 		TakesScreenshot ts = (TakesScreenshot) augmentedDriver;
@@ -144,40 +175,22 @@ public class TAction {
 		return this.driver.getCurrentUrl();
 	}
 
-	// 滚动页面到指定位置
-	public void scroll(String x, String y) {
-		if (x.equals("left")) {
-			x = "0";
-		} else if (x.equals("right")) {
-			x = "document.body.scrollWidth";
-		} else if (x.equals("middle")) {
-			x = "document.body.scrollWidth/2";
-		}
-		if (y.equals("top")) {
-			y = "0";
-		} else if (y.equals("buttom")) {
-			y = "document.body.scrollHeight";
-		} else if (y.equals("middle")) {
-			y = "document.body.scrollHeight/2";
-		}
-		this.exeScript(String.format("scroll(%s,%s);", x, y));
-	}
+	// 悬停
+	public void hover(String xpath) {
 
-	public void exeScript(String parameter) {
-		JavascriptExecutor js = getJSE();
-		js.executeScript(parameter);
-	}
-
-	private JavascriptExecutor getJSE() {
-		if (this.jse == null) {
-			this.jse = (JavascriptExecutor) this.driver;
+		try {
+			WebElement element = driver.findElement(By.xpath(xpath));
+			Actions action = new Actions(driver);
+			action.moveToElement(element).perform();
+		} catch (NoSuchElementException e) {
+			System.out.println("悬停对象不存在！");
+		} catch (ElementNotVisibleException e) {
+			System.out.println("XPath匹配多个悬停对象！");
 		}
-		return jse;
 	}
 
 	/**
 	 * 查找元素
-	 * 
 	 * @param by
 	 *            传入一个类型
 	 * @param byValue
@@ -220,7 +233,6 @@ public class TAction {
 
 	/**
 	 * 查找元素并点击
-	 * 
 	 * @param by
 	 *            传入一个类型
 	 * @param byValue
@@ -236,7 +248,6 @@ public class TAction {
 
 	/**
 	 * 查找元素并清除
-	 * 
 	 * @param by
 	 *            传入一个类型
 	 * @param byValue
@@ -252,7 +263,6 @@ public class TAction {
 
 	/**
 	 * 查找元素并输入值
-	 * 
 	 * @param by
 	 *            传入一个类型
 	 * @param byValue
@@ -268,29 +278,10 @@ public class TAction {
 		}
 	}
 
-	/**
-	 * 执行js方法
-	 * 
-	 * @param js
-	 */
-	public boolean excuteJS(String js) {
-		if (flag) {
-			try {
-				((JavascriptExecutor) driver).executeScript(js);
-				return true;
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				return false;
-			}
-		} else {
-			System.out.println("flag is false, function is not excuted");
-			return false;
-		}
-	}
+	
 
 	/**
 	 * 根据id定位元素并输入内容
-	 * 
 	 * @param id
 	 * @param value
 	 */
@@ -311,7 +302,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素并输入内容
-	 * 
 	 * @param xpath
 	 * @param value
 	 */
@@ -332,7 +322,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素并输入内容
-	 * 
 	 * @param css
 	 * @param value
 	 */
@@ -353,7 +342,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素并点击
-	 * 
 	 * @param xpath
 	 */
 	public boolean clickByXpath(String xpath) {
@@ -373,7 +361,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素并点击
-	 * 
 	 * @param css
 	 */
 	public boolean clickByCss(String css) {
@@ -393,7 +380,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素获取值
-	 * 
 	 * @param xpath
 	 * @return
 	 */
@@ -410,7 +396,6 @@ public class TAction {
 
 	/**
 	 * 根据id定位元素获取值
-	 * 
 	 * @param id
 	 * @return
 	 */
@@ -427,7 +412,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素获取值
-	 * 
 	 * @param css
 	 * @return
 	 */
@@ -444,7 +428,6 @@ public class TAction {
 
 	/**
 	 * 根据id定位元素并清空值
-	 * 
 	 * @param id
 	 */
 	public boolean clearInputValueById(String id) {
@@ -464,7 +447,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素并清空值
-	 * 
 	 * @param xpath
 	 */
 	public boolean clearInputValueByXpath(String xpath) {
@@ -484,7 +466,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素并清空值
-	 * 
 	 * @param css
 	 */
 	public boolean clearInputValueByCss(String css) {
@@ -504,7 +485,6 @@ public class TAction {
 
 	/**
 	 * 切换到frame框
-	 * 
 	 * @param frameName
 	 */
 	public boolean switchToFrame(String frameName) {
@@ -525,7 +505,6 @@ public class TAction {
 
 	/**
 	 * 根据id定位元素并获取元素的显示状态
-	 * 
 	 * @param id
 	 * @return boolean
 	 */
@@ -540,7 +519,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素并获取元素的显示状态
-	 * 
 	 * @param xpath
 	 * @return
 	 */
@@ -555,7 +533,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素并获取元素的显示状态
-	 * 
 	 * @param css
 	 * @return
 	 */
@@ -570,7 +547,6 @@ public class TAction {
 
 	/**
 	 * 根据id定位元素并获取元素的可写状态
-	 * 
 	 * @param id
 	 * @return
 	 */
@@ -585,7 +561,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素并获取元素的可写状态
-	 * 
 	 * @param xpath
 	 * @return
 	 */
@@ -600,7 +575,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素并获取元素的可写状态
-	 * 
 	 * @param css
 	 * @return
 	 */
@@ -611,12 +585,10 @@ public class TAction {
 			System.out.println("flag is false, function is not excuted");
 			return false;
 		}
-
 	}
 
 	/**
 	 * 根据id定位元素并获取元素的选中状态
-	 * 
 	 * @param id
 	 * @return
 	 */
@@ -631,7 +603,6 @@ public class TAction {
 
 	/**
 	 * 根据xpath定位元素并获取元素的选中状态
-	 * 
 	 * @param xpath
 	 * @return
 	 */
@@ -646,7 +617,6 @@ public class TAction {
 
 	/**
 	 * 根据css定位元素并获取元素的选中状态
-	 * 
 	 * @param css
 	 * @return
 	 */
@@ -661,7 +631,6 @@ public class TAction {
 
 	/**
 	 * 获取当前焦点所在页面元素的属性值(name,value,id,src等等)
-	 * 
 	 * @param attribute
 	 * @return
 	 */
@@ -679,7 +648,6 @@ public class TAction {
 
 	/**
 	 * 设置定位页面元素的超时时间
-	 * 
 	 * @param second
 	 * @return
 	 */
@@ -696,7 +664,6 @@ public class TAction {
 
 	/**
 	 * 休息间隔，单位毫秒
-	 * 
 	 * @param i
 	 * @return
 	 */
@@ -710,12 +677,29 @@ public class TAction {
 		}
 	}
 
-	// JS
+	// 执行JS
 	public void executeJS(String jsString) {
 		JavascriptExecutor js = (JavascriptExecutor) driver;
 		js.executeScript(jsString);
 	}
-
+	/**
+	 * 执行JS方法
+	 * @param js
+	 */
+	public boolean excuteJS(String js) {
+		if (flag) {
+			try {
+				((JavascriptExecutor) driver).executeScript(js);
+				return true;
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				return false;
+			}
+		} else {
+			System.out.println("flag is false, function is not excuted");
+			return false;
+		}
+	}
 	// 根据xpath定位输入框并清空
 	public WebElement webEdit(String xpath) {
 
@@ -730,7 +714,6 @@ public class TAction {
 			System.out.println("XPath匹配多个输入框！");
 			return null;
 		}
-
 	}
 
 	// 根据xpath定位按钮
@@ -746,7 +729,6 @@ public class TAction {
 			System.out.println("XPath匹配多个按钮！");
 			return null;
 		}
-
 	}
 
 	// 根据xpath定位链接
@@ -762,23 +744,9 @@ public class TAction {
 			System.out.println("XPath匹配多个链接！");
 			return null;
 		}
-
 	}
 
-	// 悬停
-	public void hover(String xpath) {
-
-		try {
-			WebElement element = driver.findElement(By.xpath(xpath));
-			Actions action = new Actions(driver);
-			action.moveToElement(element).perform();
-		} catch (NoSuchElementException e) {
-			System.out.println("悬停对象不存在！");
-		} catch (ElementNotVisibleException e) {
-			System.out.println("XPath匹配多个悬停对象！");
-		}
-
-	}
+	
 
 	// 单选按钮
 	public List<WebElement> webRadioGroup(String xpath) {
